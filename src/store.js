@@ -6,13 +6,21 @@ import {
   useCallback,
   useMemo,
 } from "react";
+import { useQuery } from "react-query";
 
 const usePokemonSource = () => {
-  const [{ pokemon, search }, dispatch] = useReducer(
+  //useQuey hook tanstack
+  const { data: pokemon } = useQuery(
+    ["pokemon"],
+    () => fetch("/pokemon.json").then((res) => res.json()),
+    {
+      initialData: [],
+    }
+  );
+
+  const [{ search }, dispatch] = useReducer(
     (state, action) => {
       switch (action.type) {
-        case "SET_POKEMON":
-          return { ...state, pokemon: action.payload };
         case "SET_SEARCH":
           return { ...state, search: action.payload };
         default:
@@ -20,18 +28,9 @@ const usePokemonSource = () => {
       }
     },
     {
-      pokemon: [],
       search: "",
     }
   );
-
-  useEffect(() => {
-    (async function () {
-      await fetch("/pokemon.json")
-        .then((res) => res.json())
-        .then((data) => dispatch({ type: "SET_POKEMON", payload: data }));
-    })();
-  }, []);
 
   const setSearch = useCallback((search) => {
     dispatch({
