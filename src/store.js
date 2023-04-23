@@ -22,7 +22,7 @@ const usePokemonSource = () => {
     (state, action) => {
       switch (action.type) {
         case "SET_SEARCH":
-          return { ...state, search: action.payload, page: 0 };
+          return { ...state, search: action.payload, page: 1 };
         case "SET_PAGE":
           return { ...state, page: action.payload };
         default:
@@ -53,7 +53,6 @@ const usePokemonSource = () => {
     () =>
       pokemon
         .filter((p) => p.name.toLowerCase().includes(search.toLowerCase())),
-        // .slice(page * 20, (page + 1) * 20),
     [pokemon, search, page]
   );
 
@@ -63,13 +62,13 @@ const usePokemonSource = () => {
   );
 
   const paginatedPokemon = useMemo(
-    ()=> [...sortedPokemon].slice(page * 20 - 20, page * 20),
-    [sortedPokemon]
+    () => [...sortedPokemon].slice(page * 20 - 20, page * 20),
+    [sortedPokemon, page]
   )
 
-  const totalPages = useMemo(() => Math.floor(pokemon.length / 20), [pokemon]);
+  const totalPages = useMemo(() => Math.floor(sortedPokemon.length / 20), [sortedPokemon]);
 
-  return { pokemon: paginatedPokemon, search, setSearch, page, setPage, totalPages };
+  return { pokemon: paginatedPokemon, search, setSearch, page: totalPages === 0 ? 0 : page, setPage, totalPages };
 };
 
 const pokemonContext = createContext();
