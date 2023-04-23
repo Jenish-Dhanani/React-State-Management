@@ -11,7 +11,7 @@ import {
   ReactLocation,
   Outlet,
 } from "@tanstack/react-location";
-import React from "react";
+import React, {useState, useEffect} from "react";
 
 const queryClient = new QueryClient();
 const location = new ReactLocation();
@@ -62,6 +62,7 @@ function SearchBox() {
 function PokemonList() {
   const { pokemon } = usePokemon();
   return (
+    <React.Fragment>
     <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-3">
       {pokemon &&
         pokemon.map((p) => (
@@ -84,6 +85,8 @@ function PokemonList() {
           </li>
         ))}
     </ul>
+    <Pagination/>
+    </React.Fragment>
   );
 }
 
@@ -169,6 +172,35 @@ function PokemonDetail() {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+
+function Pagination() {
+  const { page, totalPages, setPage } = usePokemon()
+
+  return (
+    <div className="flex justify-center items-center my-12">
+      <button
+        className="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-4 py-2 mr-2"
+        disabled={page === 1}
+        onClick={() => setPage(page - 1)}
+      >
+        Previous
+      </button>
+      <div>
+        <p>
+          {page} / {totalPages}
+        </p>
+      </div>
+      <button
+        className="text-white bg-blue-700 hover:bg-blue-800 rounded-lg px-4 py-2 ml-2"
+        disabled={page === totalPages}
+        onClick={() => setPage(page + 1)}
+      >
+        Next
+      </button>
     </div>
   );
 }
